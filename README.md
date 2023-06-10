@@ -7,7 +7,7 @@ For this script to work You will need preferably Yuzu installed through ***[EmuD
 You can use this script standalone in desktop mode of Your steam deck, but I highly recomend adding it in **Bash Shortcuts** plugin from ***[Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader)*** official plugin store.
 
 ## Guide for adding YuzuEA.sh to Gaming mode on Deck
-1. Firstly download and safe ***[yuzuEA.sh](yuzuEA.sh)*** to Your preferable location. In my case I'm saving it directly into ***/home/deck/***.
+1. Firstly download ***yuzuEA.sh*** from ***[latest release](https://github.com/BlacksQare/deck-yuzuEAupdater/releases)*** to Your preferable location. In my case I'm saving it directly into ***/home/deck/***.
 
 2. Download ***[Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader)*** and then install ***Bash Shortcuts***.
 
