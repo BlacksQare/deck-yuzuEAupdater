@@ -10,7 +10,7 @@ showProgress="true"
 createDesktop() {
 	cat > yuzu.desktop.temp << EOF
 [Desktop Entry]
-Name=Yuzu Early Access
+Name=Yuzu EA
 Exec=appimage-run $home/Applications/yuzu.AppImage %u
 Icon=$home/.local/share/applications/yuzu_ea.png
 Comment=Nintendo Switch Emulator
@@ -22,16 +22,30 @@ StartupNotify=true
 StartupWMClass=yuzu
 EOF
 
+	cat > yuzuEAUpdate.desktop.temp << EOF
+[Desktop Entry]
+Name=Update Yuzu EA
+Exec=bash $home/Applications/yuzuEA.sh
+Icon=$home/.local/share/applications/yuzu_ea.png
+Comment=Nintendo Switch Emulator
+Type=Application
+Terminal=false
+Encoding=UTF-8
+Categories=Utility;
+StartupNotify=true
+StartupWMClass=yuzu
+EOF
+
 	mv -v yuzu.desktop.temp $home/.local/share/applications/yuzu.desktop
 	chmod +x $home/.local/share/applications/yuzu.desktop
 
-    curl -LJo "$home/.local/share/applications/yuzu_ea.png" "https://raw.githubusercontent.com/yuzu-emu/yuzu-assets/master/icons/icon_ea.png"
+    mv -v yuzuEAUpdate.desktop.temp $home/.local/share/applications/yuzuEAUpdate.desktop
+	chmod +x $home/.local/share/applications/yuzuEAUpdate.desktop
 
-	# if safeDownload "icon_ea" "https://github.com/yuzu-emu/yuzu-assets/blob/master/icons/icon_ea.png" "/home/ml/.local/share/applications/yuzu_ea.png" "$showProgress"; then
-	# 	chmod +x "$output"
-	# else
-	# 	zenity --error --text "Error downloading yuzu!" --width=250 2>/dev/null
-	# fi
+    curl -LJo "$home/.local/share/applications/yuzu_ea.png" "https://raw.githubusercontent.com/yuzu-emu/yuzu-assets/master/icons/icon_ea.png"
+	curl -LJo "$home/Applications/yuzuEA.sh" "https://raw.githubusercontent.com/BlacksQare/deck-yuzuEAupdater/master/yuzuEA.sh"
+
+	chmod +x $home/Applications/yuzuEA.sh
 }
 
 safeDownload() {
