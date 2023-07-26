@@ -3,8 +3,36 @@ yuzuHost="https://api.github.com/repos/pineappleEA/pineapple-src/releases/latest
 metaData=$(curl -fSs ${yuzuHost})
 fileToDownload=$(echo ${metaData} | jq -r '.assets[] | select(.name|test(".*.AppImage$")).browser_download_url')
 currentVer=$(echo ${metaData} | jq -r '.tag_name')
-output="/home/deck/Applications/yuzu.AppImage"
+home=$(getent passwd $USER | cut -d: -f6)
+output=$home"/Applications/yuzu.AppImage"
 showProgress="true"
+
+createDesktop() {
+	cat > yuzu.desktop.temp << EOF
+[Desktop Entry]
+Name=Yuzu Early Access
+Exec=appimage-run $home/Applications/yuzu.AppImage %u
+Icon=$home/.local/share/applications/yuzu_ea.png
+Comment=Nintendo Switch Emulator
+Type=Application
+Terminal=false
+Encoding=UTF-8
+Categories=Games;
+StartupNotify=true
+StartupWMClass=yuzu
+EOF
+
+	mv -v yuzu.desktop.temp $home/.local/share/applications/yuzu.desktop
+	chmod +x $home/.local/share/applications/yuzu.desktop
+
+    curl -LJo "$home/.local/share/applications/yuzu_ea.png" "https://raw.githubusercontent.com/yuzu-emu/yuzu-assets/master/icons/icon_ea.png"
+
+	# if safeDownload "icon_ea" "https://github.com/yuzu-emu/yuzu-assets/blob/master/icons/icon_ea.png" "/home/ml/.local/share/applications/yuzu_ea.png" "$showProgress"; then
+	# 	chmod +x "$output"
+	# else
+	# 	zenity --error --text "Error downloading yuzu!" --width=250 2>/dev/null
+	# fi
+}
 
 safeDownload() {
 	local name="$1"
@@ -43,14 +71,17 @@ safeDownload() {
 	fi
 }
 
+
 if [ "$showProgress" == "true" ] || [[ $showProgress -eq 1 ]]; then
 	zenity --question --title="Yuzu EA Download" --width 200 --text "Yuzu ${currentVer} available. Would you like to download?" --ok-label="Yes" --cancel-label="No" 2>/dev/null
 	if [ $? = 0 ]; then
 		echo "download ${currentVer} appimage: ${fileToDownload}"
 		if safeDownload "yuzu" "${fileToDownload}" "$output" "$showProgress"; then
 			chmod +x "$output"
+			createDesktop
 		else
 			zenity --error --text "Error downloading yuzu!" --width=250 2>/dev/null
+			createDesktop
 		fi
 	fi
 else 
