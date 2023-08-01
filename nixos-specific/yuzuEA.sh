@@ -27,7 +27,7 @@ else
 	cat > yuzu.desktop.temp << EOF
 [Desktop Entry]
 Name=Yuzu EA
-Exec=$home/Applications/yuzu.AppImage
+Exec=appimage-run $home/Applications/yuzu.AppImage %u
 Icon=$home/.local/share/applications/yuzu_ea.png
 Comment=Nintendo Switch Emulator
 Type=Application
