@@ -6,10 +6,8 @@ currentVer=$(echo ${metaData} | jq -r '.tag_name')
 home=$(getent passwd $USER | cut -d: -f6)
 output=$home"/Applications/yuzu.AppImage"
 showProgress="true"
-nix="false"
 
 createDesktop() {
-if [ "$nix" == "true" ]; then
 	cat > yuzu.desktop.temp << EOF
 [Desktop Entry]
 Name=Yuzu EA
@@ -19,25 +17,10 @@ Comment=Nintendo Switch Emulator
 Type=Application
 Terminal=false
 Encoding=UTF-8
-Categories=Game;
+Categories=Games;
 StartupNotify=true
 StartupWMClass=yuzu
 EOF
-else 
-	cat > yuzu.desktop.temp << EOF
-[Desktop Entry]
-Name=Yuzu EA
-Exec=$home/Applications/yuzu.AppImage
-Icon=$home/.local/share/applications/yuzu_ea.png
-Comment=Nintendo Switch Emulator
-Type=Application
-Terminal=false
-Encoding=UTF-8
-Categories=Game;
-StartupNotify=true
-StartupWMClass=yuzu
-EOF
-fi
 
 	cat > yuzuEAUpdate.desktop.temp << EOF
 [Desktop Entry]
@@ -60,11 +43,7 @@ EOF
 	chmod +x $home/.local/share/applications/yuzuEAUpdate.desktop
 
     curl -LJo "$home/.local/share/applications/yuzu_ea.png" "https://raw.githubusercontent.com/yuzu-emu/yuzu-assets/master/icons/icon_ea.png"
-	if [ "$nix" == "true" ];then
-		curl -LJo "$home/Applications/yuzuEA.sh" "https://raw.githubusercontent.com/BlacksQare/deck-yuzuEAupdater/master/nixos-specific/yuzuEA.sh"
-	else
-		curl -LJo "$home/Applications/yuzuEA.sh" "https://raw.githubusercontent.com/BlacksQare/deck-yuzuEAupdater/master/yuzuEA.sh"
-	fi 
+	curl -LJo "$home/Applications/yuzuEA.sh" "https://raw.githubusercontent.com/BlacksQare/deck-yuzuEAupdater/master/yuzuEA.sh"
 
 	chmod +x $home/Applications/yuzuEA.sh
 }
