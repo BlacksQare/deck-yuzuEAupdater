@@ -6,6 +6,9 @@ currentVer=$(echo ${metaData} | jq -r '.tag_name')
 home=$(getent passwd $USER | cut -d: -f6)
 output=$home"/Applications/yuzu.AppImage"
 showProgress="true"
+useTesting="false"
+offline="true"
+retry="true"
 
 createDesktop() {
 	cat > yuzu.desktop.temp << EOF
@@ -36,16 +39,21 @@ StartupNotify=true
 StartupWMClass=yuzu
 EOF
 
-	mv -v yuzu.desktop.temp $home/.local/share/applications/yuzu.desktop
-	chmod +x $home/.local/share/applications/yuzu.desktop
+	mv -v yuzu.desktop.temp "$home/.local/share/applications/yuzu.desktop"
+	chmod +x "$home/.local/share/applications/yuzu.desktop"
 
-    mv -v yuzuEAUpdate.desktop.temp $home/.local/share/applications/yuzuEAUpdate.desktop
-	chmod +x $home/.local/share/applications/yuzuEAUpdate.desktop
+    mv -v yuzuEAUpdate.desktop.temp "$home/.local/share/applications/yuzuEAUpdate.desktop"
+	chmod +x "$home/.local/share/applications/yuzuEAUpdate.desktop"
 
     curl -LJo "$home/.local/share/applications/yuzu_ea.png" "https://raw.githubusercontent.com/yuzu-emu/yuzu-assets/master/icons/icon_ea.png"
-	curl -LJo "$home/Applications/yuzuEA.sh" "https://raw.githubusercontent.com/BlacksQare/deck-yuzuEAupdater/master/yuzuEA.sh"
+	
+	if [ "$offline" == "true" ]; then
+	    cp "yuzuEA.sh" "$home/Applications/yuzuEA.sh"
+	else
+		curl -LJo "$home/Applications/yuzuEA.sh" "https://raw.githubusercontent.com/BlacksQare/deck-yuzuEAupdater/master/yuzuEA.sh"
+	fi 
 
-	chmod +x $home/Applications/yuzuEA.sh
+	chmod +x "$home/Applications/yuzuEA.sh"
 }
 
 safeDownload() {
@@ -85,22 +93,29 @@ safeDownload() {
 	fi
 }
 
-
-if [ "$showProgress" == "true" ] || [[ $showProgress -eq 1 ]]; then
-	zenity --question --title="Yuzu EA Download" --width 200 --text "Yuzu ${currentVer} available. Would you like to download?" --ok-label="Yes" --cancel-label="No" 2>/dev/null
-	if [ $? = 0 ]; then
+while [ "$retry" = "true" ]; do
+	retry="false"
+	if [ "$showProgress" == "true" ] || [[ $showProgress -eq 1 ]]; then
+		zenity --question --title="Yuzu EA Download" --width 200 --text "Yuzu ${currentVer} available. Would you like to download?" --ok-label="Yes" --cancel-label="No" 2>/dev/null
+		if [ $? = 0 ]; then
+			echo "download ${currentVer} appimage: ${fileToDownload}"
+			if safeDownload "yuzu" "${fileToDownload}" "$output" "$showProgress"; then
+				chmod +x "$output"
+				createDesktop
+			else
+				out=$(zenity --error --text "Error downloading yuzu!" --extra-button "Retry" --width=250 2>/dev/null)
+				if [ $out == "Retry" ]; then
+					retry="true"
+					continue
+				else
+				    continue
+				fi
+			fi
+		fi
+	else 
 		echo "download ${currentVer} appimage: ${fileToDownload}"
 		if safeDownload "yuzu" "${fileToDownload}" "$output" "$showProgress"; then
 			chmod +x "$output"
-			createDesktop
-		else
-			zenity --error --text "Error downloading yuzu!" --width=250 2>/dev/null
-			createDesktop
 		fi
 	fi
-else 
-	echo "download ${currentVer} appimage: ${fileToDownload}"
-	if safeDownload "yuzu" "${fileToDownload}" "$output" "$showProgress"; then
-		chmod +x "$output"
-	fi
-fi
+done
