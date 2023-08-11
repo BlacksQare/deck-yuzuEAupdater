@@ -102,6 +102,7 @@ while [ "$retry" = "true" ]; do
 			if safeDownload "yuzu" "${fileToDownload}" "$output" "$showProgress"; then
 				chmod +x "$output"
 				createDesktop
+				zenity --info --title "Download Successful" --text "Downloading of Yuzu EA completed" --width=250
 			else
 				out=$(zenity --error --text "Error downloading yuzu!" --extra-button "Retry" --width=250 2>/dev/null)
 				if [ $out == "Retry" ]; then
