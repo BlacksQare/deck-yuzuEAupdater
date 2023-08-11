@@ -6,7 +6,7 @@ currentVer=$(echo ${metaData} | jq -r '.tag_name')
 home=$(getent passwd $USER | cut -d: -f6)
 output=$home"/Applications/yuzu.AppImage"
 showProgress="true"
-useTesting="false"
+useTesting="true"
 offline="false"
 retry="true"
 
@@ -50,7 +50,12 @@ EOF
 	if [ "$offline" == "true" ]; then
 	    cp "yuzuEA.sh" "$home/Applications/yuzuEA.sh"
 	else
-		curl -LJo "$home/Applications/yuzuEA.sh" "https://raw.githubusercontent.com/BlacksQare/deck-yuzuEAupdater/master/yuzuEA.sh"
+		if [ "$useTesting" == "true" ]; then
+			echo "Using Testing"
+			curl -LJo "$home/Applications/yuzuEA.sh" "https://raw.githubusercontent.com/BlacksQare/deck-yuzuEAupdater/Testing/yuzuEA.sh"
+		else
+			curl -LJo "$home/Applications/yuzuEA.sh" "https://raw.githubusercontent.com/BlacksQare/deck-yuzuEAupdater/master/yuzuEA.sh"
+		fi
 	fi 
 
 	chmod +x "$home/Applications/yuzuEA.sh"
@@ -95,11 +100,10 @@ safeDownload() {
 
 while [ "$retry" = "true" ]; do
 	retry="false"
-
 	if [ -f /etc/os-release ]; then
 		. /etc/os-release
 		OS_ID=$ID
-		echo "$OS_ID"
+		echo "OS_ID $OS_ID"
 	else 
 		OS_ID="0"
 	fi
