@@ -11,13 +11,13 @@ createDesktop() {
 	cat > yuzu.desktop.temp << EOF
 [Desktop Entry]
 Name=Yuzu EA
-Exec=appimage-run $home/Applications/yuzu.AppImage %u
+Exec=$home/Applications/yuzu.AppImage
 Icon=$home/.local/share/applications/yuzu_ea.png
 Comment=Nintendo Switch Emulator
 Type=Application
 Terminal=false
 Encoding=UTF-8
-Categories=Games;
+Categories=Game;
 StartupNotify=true
 StartupWMClass=yuzu
 EOF
