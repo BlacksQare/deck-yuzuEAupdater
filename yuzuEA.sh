@@ -7,7 +7,7 @@ home=$(getent passwd $USER | cut -d: -f6)
 output=$home"/Applications/yuzu.AppImage"
 showProgress="true"
 useTesting="false"
-offline="true"
+offline="false"
 retry="true"
 
 createDesktop() {
