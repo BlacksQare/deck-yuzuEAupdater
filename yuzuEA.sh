@@ -95,6 +95,19 @@ safeDownload() {
 
 while [ "$retry" = "true" ]; do
 	retry="false"
+
+	if [ -f /etc/os-release ]; then
+		. /etc/os-release
+		OS_ID=$ID
+		echo "$OS_ID"
+	else 
+		OS_ID="0"
+	fi
+    
+	if [ "$OS_ID" != "steamos" ]; then
+		zenity --warning --text "Your distribution may not be supported! This script is ment for Steam Deck and SteamOS" --width=250
+	fi
+
 	if [ "$showProgress" == "true" ] || [[ $showProgress -eq 1 ]]; then
 		zenity --question --title="Yuzu EA Download" --width 200 --text "Yuzu ${currentVer} available. Would you like to download?" --ok-label="Yes" --cancel-label="No" 2>/dev/null
 		if [ $? = 0 ]; then
