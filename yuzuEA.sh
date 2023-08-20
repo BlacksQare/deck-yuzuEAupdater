@@ -11,7 +11,25 @@ offline="false"
 retry="true"
 
 createDesktop() {
-	cat > yuzu.desktop.temp << EOF
+	case $OS_ID in 
+		"nixos")
+				cat > yuzu.desktop.temp << EOF
+[Desktop Entry]
+Name=Yuzu EA
+Exec=appimage-run $home/Applications/yuzu.AppImage %u
+Icon=$home/.local/share/applications/yuzu_ea.png
+Comment=Nintendo Switch Emulator
+Type=Application
+Terminal=false
+Encoding=UTF-8
+Categories=Game;
+StartupNotify=true
+StartupWMClass=yuzu
+EOF
+	;;
+
+		"steamos")
+				cat > yuzu.desktop.temp << EOF
 [Desktop Entry]
 Name=Yuzu EA
 Exec=$home/Applications/yuzu.AppImage
@@ -24,6 +42,24 @@ Categories=Game;
 StartupNotify=true
 StartupWMClass=yuzu
 EOF
+	;;
+
+		*)
+				cat > yuzu.desktop.temp << EOF
+[Desktop Entry]
+Name=Yuzu EA
+Exec=$home/Applications/yuzu.AppImage
+Icon=$home/.local/share/applications/yuzu_ea.png
+Comment=Nintendo Switch Emulator
+Type=Application
+Terminal=false
+Encoding=UTF-8
+Categories=Game;
+StartupNotify=true
+StartupWMClass=yuzu
+EOF
+	;;
+	esac
 
 	cat > yuzuEAUpdate.desktop.temp << EOF
 [Desktop Entry]
@@ -42,10 +78,10 @@ EOF
 	mv -v yuzu.desktop.temp "$home/.local/share/applications/yuzu.desktop"
 	chmod +x "$home/.local/share/applications/yuzu.desktop"
 
-    mv -v yuzuEAUpdate.desktop.temp "$home/.local/share/applications/yuzuEAUpdate.desktop"
+  mv -v yuzuEAUpdate.desktop.temp "$home/.local/share/applications/yuzuEAUpdate.desktop"
 	chmod +x "$home/.local/share/applications/yuzuEAUpdate.desktop"
 
-    curl -LJo "$home/.local/share/applications/yuzu_ea.png" "https://raw.githubusercontent.com/yuzu-emu/yuzu-assets/master/icons/icon_ea.png"
+  curl -LJo "$home/.local/share/applications/yuzu_ea.png" "https://raw.githubusercontent.com/yuzu-emu/yuzu-assets/master/icons/icon_ea.png"
 	
 	if [ "$offline" == "true" ]; then
 	    cp "yuzuEA.sh" "$home/Applications/yuzuEA.sh"
